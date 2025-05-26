@@ -13,16 +13,21 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
 WORKDIR /src
 
 # Copiar arquivos de projeto e restaurar dependências
-COPY ["*.csproj", "./"]
-RUN dotnet restore
+# AJUSTADO: Copia o .csproj da pasta challengeABD
+COPY ["challengeABD/*.csproj", "challengeABD/"]
+RUN dotnet restore "challengeABD/challengeABD.csproj"
 
-# Copiar código fonte e fazer build
+# Copiar todo o código fonte (incluindo a pasta challengeABD)
 COPY . .
-RUN dotnet build -c Release -o /app/build
+
+# AJUSTADO: Define o diretório de trabalho para a pasta do projeto antes do build
+WORKDIR "/src/challengeABD"
+RUN dotnet build "challengeABD.csproj" -c Release -o /app/build
 
 # Publicar aplicação
+# AJUSTADO: Publica a partir do arquivo de projeto correto
 FROM build AS publish
-RUN dotnet publish -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "challengeABD.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 # Imagem final
 FROM base AS final
@@ -38,4 +43,5 @@ USER appuser
 ENV ASPNETCORE_URLS=http://+:5000
 ENV ASPNETCORE_ENVIRONMENT=Production
 
-ENTRYPOINT ["dotnet", "SuaAPI.dll"]
+# AJUSTADO: Certifique-se que o nome da DLL está correto
+ENTRYPOINT ["dotnet", "challengeABD.dll"] 
