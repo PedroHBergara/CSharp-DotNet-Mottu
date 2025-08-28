@@ -1,5 +1,5 @@
 # Use a imagem base otimizada do .NET 9.0 Preview
-FROM mcr.microsoft.com/dotnet/aspnet:9.0-preview-alpine AS base
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 WORKDIR /app
 EXPOSE 5000
 EXPOSE 5001
@@ -9,7 +9,7 @@ RUN addgroup -g 1001 -S appgroup && \
     adduser -S appuser -u 1001 -G appgroup
 
 # Use a imagem SDK do .NET 9.0 Preview para build
-FROM mcr.microsoft.com/dotnet/sdk:9.0-preview-alpine AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
 # Copiar arquivos de projeto e restaurar dependências
