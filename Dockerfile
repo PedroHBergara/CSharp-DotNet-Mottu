@@ -1,46 +1,45 @@
-# --------------------------
-# Etapa 1: Build da aplicação
-# --------------------------
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+# Use a imagem base otimizada do .NET 9.0 Preview
+FROM mcr.microsoft.com/dotnet/aspnet:9.0-preview-alpine AS base
+WORKDIR /app
+EXPOSE 5000
+EXPOSE 5001
 
-# Define o diretório de trabalho
+# Criar usuário não-root
+RUN addgroup -g 1001 -S appgroup && \
+    adduser -S appuser -u 1001 -G appgroup
+
+# Use a imagem SDK do .NET 9.0 Preview para build
+FROM mcr.microsoft.com/dotnet/sdk:9.0-preview-alpine AS build
 WORKDIR /src
 
-# Copia os arquivos de solução e projeto
-COPY *.sln .
-COPY Mottu/*.csproj ./Mottu/
+# Copiar arquivos de projeto e restaurar dependências
+COPY ["challengeABD/*.csproj", "challengeABD/"]
+RUN dotnet restore "challengeABD/challengeABD.csproj"
 
-# Restaura os pacotes
-RUN dotnet restore
-
-# Copia o restante do código
+# Copiar todo o código fonte (incluindo a pasta challengeABD)
 COPY . .
 
-# Define diretório de trabalho do projeto
-WORKDIR /src/Mottu
+# Define o diretório de trabalho para a pasta do projeto antes do build
+WORKDIR "/src/challengeABD"
+RUN dotnet build "challengeABD.csproj" -c Release -o /app/build
 
-# Publica a aplicação em Release
-RUN dotnet publish -c Release -o /app
+# Publicar aplicação
+FROM build AS publish
+RUN dotnet publish "challengeABD.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
-# --------------------------
-# Etapa 2: Imagem final (runtime)
-# --------------------------
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
-
-# Define o diretório de trabalho
+# Imagem final
+FROM base AS final
 WORKDIR /app
 
-# Copia os arquivos publicados da etapa de build
-COPY --from=build /app .
+# Copiar arquivos publicados
+COPY --from=publish /app/publish .
 
-# Define variáveis de ambiente
+# Mudar para usuário não-root
+USER appuser
+
+# Configurar variáveis de ambiente
+ENV ASPNETCORE_URLS=http://+:5000
 ENV ASPNETCORE_ENVIRONMENT=Production
 
-# Expõe a porta que a aplicação usará
-EXPOSE 80
-
-# Metadata
-LABEL maintainer="Pedro Bergara <seu.email@dominio.com>"
-
-# Define o comando de inicialização
-ENTRYPOINT ["dotnet", "Mottu.dll"]
+# Certifique-se que o nome da DLL está correto
+ENTRYPOINT ["dotnet", "challengeABD.dll"]
