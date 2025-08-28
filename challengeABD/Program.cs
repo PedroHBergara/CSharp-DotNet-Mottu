@@ -8,9 +8,9 @@ using System.ComponentModel.DataAnnotations;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDbContext<MotoDB>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddDbContext<MotoDB>(optionsBuilder =>
-    optionsBuilder.UseInMemoryDatabase("MotoLista"));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddEndpointsApiExplorer(); 

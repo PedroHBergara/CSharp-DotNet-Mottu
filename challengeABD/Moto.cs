@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace challengeABD // Ou o namespace do seu projeto
+namespace challengeABD
 {
     public class Moto
     {
