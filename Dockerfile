@@ -7,8 +7,9 @@ EXPOSE 5297
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
-COPY ["challengeABD/challengeABD.csproj", "challengeABD/"]
-RUN dotnet restore "challengeABD/challengeABD/challengeABD.csproj"
+COPY ["challengeABD/challengeABD.csproj", "./challengeABD/"]
+RUN dotnet restore "./challengeABD/challengeABD.csproj"
+
 
 COPY . .
 WORKDIR "/src/challengeABD"
