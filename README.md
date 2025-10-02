@@ -1,5 +1,9 @@
 # API de Gerenciamento de Motos
 
+##Integrantes
+Pedro Henrique Bergara RM556639
+Henrique Izzi de São José 555413
+
 ## Descrição do Projeto
 
 A ideia do nosso projeto é ter um controle total sobre o galpão sabendo onde esta cada moto e como elas estão por isso fizemos essa API para ter um controle sobre nossas motos que usaremos em outras partes do projeto para mapear e localizar dentro do galpao com precisão.
