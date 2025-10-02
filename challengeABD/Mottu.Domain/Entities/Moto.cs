@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace challengeABD
+namespace Mottu.Domain.Entities
 {
     public class Moto
     {
